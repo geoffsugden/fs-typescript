@@ -10,25 +10,25 @@ interface TrainingOutput {
   average: number;
 }
 
-interface TraingInputs {
+interface TrainingInputs {
   target: number;
   dailyHours: number[];
 }
 
-const parseArguments = (args: string[]): TraingInputs => {
-  if (args.length < 4) throw new Error('Not enough argumnets');
-  const dailyHours = args.slice(3).filter((daily) => !isNaN(Number(daily)));
-  if (!isNaN(Number(args[2])) && dailyHours.length === args.slice(3).length) {
+const parseArguments = (args: string[]): TrainingInputs => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+  const dailyHours = args.slice(3).map((d) => Number(d));
+  if (!isNaN(Number(args[2])) && dailyHours.every((d) => !Number.isNaN(d))) {
     return {
       target: Number(args[2]),
-      dailyHours: dailyHours.map((daily) => Number(daily)),
+      dailyHours: dailyHours,
     };
   } else {
     throw new Error('Provided values were not numbers');
   }
 };
 
-const calculateExercies = (trainingdata: TraingInputs): TrainingOutput => {
+const calculateExercises = (trainingdata: TrainingInputs): TrainingOutput => {
   const target = trainingdata.target;
   const dailyHours = trainingdata.dailyHours;
 
@@ -53,8 +53,8 @@ const calculateExercies = (trainingdata: TraingInputs): TrainingOutput => {
 };
 
 try {
-  const trainingData: TraingInputs = parseArguments(process.argv);
-  console.log(calculateExercies(trainingData));
+  const trainingData: TrainingInputs = parseArguments(process.argv);
+  console.log(calculateExercises(trainingData));
 } catch (error: unknown) {
   let errorMessage = 'Something bad happened.';
   if (error instanceof Error) {
