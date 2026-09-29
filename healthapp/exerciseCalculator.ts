@@ -17,9 +17,8 @@ interface TraingInputs {
 
 const parseArguments = (args: string[]): TraingInputs => {
   if (args.length < 4) throw new Error('Not enough argumnets');
-  const dailyHours = args.slice(3);
-  const dailyHoursCheck = dailyHours.filter((daily) => isNaN(Number(daily))).length === 0 && dailyHours.length > 0;
-  if (!isNaN(Number(args[2])) && dailyHoursCheck) {
+  const dailyHours = args.slice(3).filter((daily) => !isNaN(Number(daily)));
+  if (!isNaN(Number(args[2])) && dailyHours.length === args.slice(3).length) {
     return {
       target: Number(args[2]),
       dailyHours: dailyHours.map((daily) => Number(daily)),
