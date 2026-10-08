@@ -10,9 +10,9 @@ interface TrainingOutput {
   average: number;
 }
 
-interface TrainingInputs {
+export interface TrainingInputs {
   target: number;
-  dailyHours: number[];
+  daily_exercises: number[];
 }
 
 const parseArguments = (args: string[]): TrainingInputs => {
@@ -21,16 +21,24 @@ const parseArguments = (args: string[]): TrainingInputs => {
   if (!isNaN(Number(args[2])) && dailyHours.every((d) => !Number.isNaN(d))) {
     return {
       target: Number(args[2]),
-      dailyHours: dailyHours,
+      daily_exercises: dailyHours,
     };
   } else {
-    throw new Error('Provided values were not numbers');
+    throw new RangeError('Provided values were not numbers');
   }
 };
 
-const calculateExercises = (trainingdata: TrainingInputs): TrainingOutput => {
+export const calculateExercises = (trainingdata: TrainingInputs): TrainingOutput => {
   const target = trainingdata.target;
-  const dailyHours = trainingdata.dailyHours;
+  const dailyHours = trainingdata.daily_exercises;
+
+  if (dailyHours.length === 0 || target <= 0 || !dailyHours.every((hours) => hours >= 0)) {
+    console.log('Length', dailyHours.length);
+    console.log('Target', target);
+    console.log('all ', dailyHours.length);
+
+    throw new RangeError('Invalid values');
+  }
 
   const periodLength = dailyHours.length;
 
@@ -52,13 +60,15 @@ const calculateExercises = (trainingdata: TrainingInputs): TrainingOutput => {
   };
 };
 
-try {
-  const trainingData: TrainingInputs = parseArguments(process.argv);
-  console.log(calculateExercises(trainingData));
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
+if (process.argv[1] === import.meta.filename) {
+  try {
+    const trainingData: TrainingInputs = parseArguments(process.argv);
+    console.log(calculateExercises(trainingData));
+  } catch (error: unknown) {
+    let errorMessage = 'Something bad happened.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
