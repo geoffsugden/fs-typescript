@@ -5,11 +5,12 @@
   "license": "ISC",
   "author": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "tsc": "tsc",
     "test": "test",
-    "dev": "concurrently \"tsc --watch\" \"node --watch index.ts\"",
-    "start": "node index.ts",
+    "dev": "concurrently \"tsc --watch\" \"node --watch ./src/index.ts\"",
+    "start": "node ./src/index.ts",
     "lint": "eslint ."
   },
   "devDependencies": {
@@ -24,7 +25,8 @@
   },
   "dependencies": {
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "uuid": "^14.0.2"
   },
   "overrides": {
     "shell-quote": "^1.11.0"
