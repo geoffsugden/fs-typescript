@@ -1,25 +1,23 @@
-import express, { type Response } from 'express';
-import type { NonSensitivePatient } from '../types.ts';
+import express, { type Request, type Response } from 'express';
+import { type PatientNoSensitiveData, type NewPatientEntry } from '../types.ts';
 import patientService from '../services/patientService.ts';
-import parseNewPatientEntry from '../utils.ts';
+import { errorMiddleWare, newPatientParser } from '../middleware.ts';
 
 const router = express.Router();
 
-router.get('/', (_req, res: Response<NonSensitivePatient[]>) => {
+router.get('/', (_req, res: Response<PatientNoSensitiveData[]>) => {
   res.send(patientService.getNonSensitivePatientData());
 });
 
-router.post('/', (req, res) => {
-  try {
-    const newPatient = parseNewPatientEntry(req.body);
-    const addedPatient = patientService.addPatient(newPatient);
+router.post(
+  '/',
+  newPatientParser,
+  (req: Request<unknown, unknown, NewPatientEntry>, res: Response<PatientNoSensitiveData>) => {
+    const addedPatient = patientService.addPatient(req.body);
     res.status(200).json(addedPatient);
-  } catch (error) {
-    let errorMessage = 'Unable to add patient';
-    if (error instanceof Error) {
-      errorMessage += ': ' + error.message;
-    }
-    res.status(500).send(errorMessage);
-  }
-});
+  },
+);
+
+router.use(errorMiddleWare);
+
 export default router;

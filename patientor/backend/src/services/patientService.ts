@@ -1,5 +1,5 @@
 import { v1 as uuid } from 'uuid';
-import type { Patient, NonSensitivePatient, NewPatientEntry } from '../types.ts';
+import type { Patient, PatientNoSensitiveData, NewPatientEntry } from '../types.ts';
 import patientData from '../../data/patients.ts';
 
 const patients: Patient[] = patientData;
@@ -8,7 +8,7 @@ const getPatientData = (): Patient[] => {
   return patients;
 };
 
-const getNonSensitivePatientData = (): NonSensitivePatient[] => {
+const getNonSensitivePatientData = (): PatientNoSensitiveData[] => {
   return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
