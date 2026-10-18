@@ -25,8 +25,10 @@ const AddDiaryEntry = (props: AddDiaryEntryProps) => {
         props.updateEntry((prevEntries) => [...prevEntries, savedEntry]);
       });
     } else {
-      props.notify('Error in one of the values submitted.');
-      console.log('Error in one of the values submitted.', typeof result.error);
+      const issues = result.error.issues.map((issue) => `**${issue.path[0].toString()}**: ${issue.message}`);
+
+      props.notify(`Error in one or more of the values submitted: ${issues.join('   |   ')}`);
+      console.log('Error in one of the values submitted.', result.error.issues);
     }
   };
 
