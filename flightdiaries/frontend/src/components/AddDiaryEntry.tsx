@@ -1,5 +1,5 @@
 // import diaryService from '../services/diaryService';
-import { Weather, Visibility, NewDiaryEntrySchema, type DiaryEntry } from '../types';
+import { Weather, Visibility, NewDiaryEntrySchema, type DiaryEntry, type NewDiaryEntry } from '../types';
 import diaryService from '../services/diaryService';
 
 interface AddDiaryEntryProps {
@@ -13,23 +13,16 @@ const AddDiaryEntry = (props: AddDiaryEntryProps) => {
 
     const formData = new FormData(event.currentTarget);
 
-    const result = NewDiaryEntrySchema.safeParse({
+    const result = {
       date: formData.get('date'),
       weather: formData.get('weather'),
       visibility: formData.get('visibility'),
       comment: formData.get('comment') || undefined,
+    } as NewDiaryEntry;
+
+    diaryService.addEntry(result).then((savedEntry) => {
+      props.updateEntry((prevEntries) => [...prevEntries, savedEntry]);
     });
-
-    if (result.success) {
-      diaryService.addEntry(result.data).then((savedEntry) => {
-        props.updateEntry((prevEntries) => [...prevEntries, savedEntry]);
-      });
-    } else {
-      const issues = result.error.issues.map((issue) => `**${issue.path[0].toString()}**: ${issue.message}`);
-
-      props.notify(`Error in one or more of the values submitted: ${issues.join('   |   ')}`);
-      console.log('Error in one of the values submitted.', result.error.issues);
-    }
   };
 
   return (
