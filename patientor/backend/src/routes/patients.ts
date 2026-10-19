@@ -1,5 +1,5 @@
 import express, { type Request, type Response } from 'express';
-import { type PatientNoSensitiveData, type NewPatientEntry } from '../types.ts';
+import { type PatientNoSensitiveData, type NewPatientEntry, type Patient } from '../types.ts';
 import patientService from '../services/patientService.ts';
 import { errorMiddleWare, newPatientParser } from '../middleware.ts';
 
@@ -7,6 +7,10 @@ const router = express.Router();
 
 router.get('/', (_req, res: Response<PatientNoSensitiveData[]>) => {
   res.send(patientService.getNonSensitivePatientData());
+});
+
+router.get('/:id', (req, res: Response<Patient>) => {
+  res.send(patientService.getIndividualPatientData(req.params.id));
 });
 
 router.post(
