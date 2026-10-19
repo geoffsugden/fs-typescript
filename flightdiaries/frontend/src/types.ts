@@ -32,3 +32,11 @@ export type DiaryEntry = z.infer<typeof DiaryEntrySchema>;
 export const NewDiaryEntrySchema = DiaryEntrySchema.omit({ id: true });
 
 export type NewDiaryEntry = z.infer<typeof NewDiaryEntrySchema>;
+
+export const ApiErrorValidationSchema = z.object({
+  code: z.string(),
+  path: z.array(z.string()),
+  message: z.string(),
+});
+
+export type ApiError = z.infer<typeof ApiErrorValidationSchema>;

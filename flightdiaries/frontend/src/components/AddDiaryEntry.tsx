@@ -1,5 +1,5 @@
 // import diaryService from '../services/diaryService';
-import { Weather, Visibility, NewDiaryEntrySchema, type DiaryEntry, type NewDiaryEntry } from '../types';
+import { Weather, Visibility, type DiaryEntry, type NewDiaryEntry } from '../types';
 import diaryService from '../services/diaryService';
 
 interface AddDiaryEntryProps {
@@ -20,9 +20,16 @@ const AddDiaryEntry = (props: AddDiaryEntryProps) => {
       comment: formData.get('comment') || undefined,
     } as NewDiaryEntry;
 
-    diaryService.addEntry(result).then((savedEntry) => {
-      props.updateEntry((prevEntries) => [...prevEntries, savedEntry]);
-    });
+    diaryService
+      .addEntry(result)
+      .then((savedEntry) => {
+        if (savedEntry) props.updateEntry((prevEntries) => [...prevEntries, savedEntry]);
+      })
+      .catch((error) => {
+        console.log('Thrown Here?', error);
+
+        props.notify(error.message);
+      });
   };
 
   return (
