@@ -1,19 +1,17 @@
-import { v1 as uuid } from 'uuid';
-import type { Patient, PatientNoSensitiveData, NewPatientEntry } from '../types.ts';
-import patientData from '../../data/patients.ts';
-
-const patients: Patient[] = patientData;
+import { v1 as uuid } from "uuid";
+import type { Patient, PatientNoSensitiveData, NewPatientEntry } from "../types.ts";
+import patientData from "../../data/patients.ts";
 
 const getPatientData = (): Patient[] => {
-  return patients;
+  return patientData;
 };
 
 const getIndividualPatientData = (id: string): Patient | undefined => {
-  return patients.find((p) => (p.id = id));
+  return patientData.find((p) => p.id === id);
 };
 
 const getNonSensitivePatientData = (): PatientNoSensitiveData[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+  return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
     dateOfBirth,
