@@ -47,8 +47,6 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
     }
   };
 
-  console.table(patients.map(({ id, name }) => ({ id, name })));
-
   return (
     <div className="App">
       <Box>
