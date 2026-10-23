@@ -57,6 +57,50 @@ interface HopsitalEntry extends BaseEntry {
 
 export type Entry = HopsitalEntry | OccupationalHealthCareEntry | HealthCheckEntry;
 
+const NewEntryBaseSchema = z.object({
+  description: z.string(),
+  date: z.iso.date(),
+  specialist: z.string(),
+  diagnosisCodes: z.array(z.string()).optional(),
+});
+
+const NewHealthCheckEntry = NewEntryBaseSchema.extend({
+  type: z.literal("HealthCheck"),
+  healthCheckRating: z.union([
+    z.literal(HealthCheckRating.Healthy),
+    z.literal(HealthCheckRating.LowRisk),
+    z.literal(HealthCheckRating.HighRisk),
+    z.literal(HealthCheckRating.CriticalRisk),
+  ]),
+});
+
+const NewOccupationalHealthCareEntry = NewEntryBaseSchema.extend({
+  type: z.literal("OccupationalHealthcare"),
+  employerName: z.string(),
+  sickLeave: z
+    .object({
+      startDate: z.iso.date(),
+      endDate: z.iso.date(),
+    })
+    .optional(),
+});
+
+const NewHospitalEntrySchema = NewEntryBaseSchema.extend({
+  type: z.literal("Hospital"),
+  discharge: z.object({
+    date: z.iso.date(),
+    criteria: z.string(),
+  }),
+});
+
+export const NewEntrySchema = z.discriminatedUnion("type", [
+  NewHealthCheckEntry,
+  NewHospitalEntrySchema,
+  NewOccupationalHealthCareEntry,
+]);
+
+export type NewEntry = z.infer<typeof NewEntrySchema>;
+
 export interface Patient {
   id: string;
   name: string;
