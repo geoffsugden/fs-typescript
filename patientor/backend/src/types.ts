@@ -58,9 +58,9 @@ interface HopsitalEntry extends BaseEntry {
 export type Entry = HopsitalEntry | OccupationalHealthCareEntry | HealthCheckEntry;
 
 const NewEntryBaseSchema = z.object({
-  description: z.string(),
+  description: z.string().min(5),
   date: z.iso.date(),
-  specialist: z.string(),
+  specialist: z.string().min(3),
   diagnosisCodes: z.array(z.string()).optional(),
 });
 
@@ -76,7 +76,7 @@ const NewHealthCheckEntry = NewEntryBaseSchema.extend({
 
 const NewOccupationalHealthCareEntry = NewEntryBaseSchema.extend({
   type: z.literal("OccupationalHealthcare"),
-  employerName: z.string(),
+  employerName: z.string().min(3),
   sickLeave: z
     .object({
       startDate: z.iso.date(),
@@ -89,7 +89,7 @@ const NewHospitalEntrySchema = NewEntryBaseSchema.extend({
   type: z.literal("Hospital"),
   discharge: z.object({
     date: z.iso.date(),
-    criteria: z.string(),
+    criteria: z.string().min(3),
   }),
 });
 
