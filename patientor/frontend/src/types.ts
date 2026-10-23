@@ -10,11 +10,50 @@ export enum Gender {
   Other = "other",
 }
 
-export interface Entry {
-  date: string;
+export interface BaseEntry {
+  id: string;
   description: string;
-  diagnosisCodes?: string[];
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
 }
+
+export const HealthCheckRating = {
+  Healthy: 0,
+  LowRisk: 1,
+  HighRisk: 2,
+  CriticalRisk: 3,
+} as const;
+
+type HealthCheckRating = (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
+
+type sickLeave = {
+  startDate: string;
+  endDate: string;
+};
+
+type discharge = {
+  date: string;
+  criteria: string;
+};
+
+interface HealthCheckEntry extends BaseEntry {
+  type: "HealthCheck";
+  healthCheckRating: HealthCheckRating;
+}
+
+interface OccupationalHealthCareEntry extends BaseEntry {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: sickLeave;
+}
+
+interface HopsitalEntry extends BaseEntry {
+  type: "Hospital";
+  discharge: discharge;
+}
+
+export type Entry = HopsitalEntry | OccupationalHealthCareEntry | HealthCheckEntry;
 
 export interface Patient {
   id: string;
