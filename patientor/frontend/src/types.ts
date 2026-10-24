@@ -25,7 +25,7 @@ export const HealthCheckRating = {
   CriticalRisk: 3,
 } as const;
 
-type HealthCheckRating = (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
+export type HealthCheckRating = (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
 
 type sickLeave = {
   startDate: string;
@@ -55,6 +55,14 @@ interface HopsitalEntry extends BaseEntry {
 
 export type Entry = HopsitalEntry | OccupationalHealthCareEntry | HealthCheckEntry;
 
+export const EntryType = {
+  HealthCheck: "HealthCheck",
+  Hospital: "Hospital",
+  OccupationalHealthcare: "OccupationalHealthcare",
+} as const;
+
+export type EntryType = (typeof EntryType)[keyof typeof EntryType];
+
 export interface Patient {
   id: string;
   name: string;
@@ -66,3 +74,7 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+
+export type EntryFormValues = UnionOmit<Entry, "id">;

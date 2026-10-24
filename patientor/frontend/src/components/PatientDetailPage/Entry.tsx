@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Box, List, ListItem, Typography } from "@mui/material";
 import {
   Favorite,
@@ -9,8 +8,7 @@ import {
   LocalHospital,
 } from "@mui/icons-material";
 
-import diagnosesService from "../../services/diagnoses";
-import { Diagnosis, type Entry } from "../../types";
+import type { Diagnosis, Entry } from "../../types";
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
@@ -31,7 +29,7 @@ const healthCheckRatingDisplay = (rating: number) => {
   }
 };
 
-const entryDetails = (entry: Entry) => {
+const entryDetails = ({ entry }: { entry: Entry }) => {
   switch (entry.type) {
     case "HealthCheck":
       return (
@@ -59,8 +57,8 @@ const entryDetails = (entry: Entry) => {
           </Typography>
           {entry.sickLeave && (
             <Typography variant="body2">
-              Start date: {entry.sickLeave.startDate} <br />
-              End date: {entry.sickLeave.endDate}
+              Sick Leave Start date: {entry.sickLeave.startDate} <br />
+              Sick Leave End date: {entry.sickLeave.endDate}
             </Typography>
           )}
         </div>
@@ -87,24 +85,30 @@ const entryDetails = (entry: Entry) => {
   }
 };
 
-const Entry = ({ entry }: { entry: Entry }) => {
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
-  useEffect(() => {
-    const fetchDiagnoses = async () => {
-      const fetchedDiagnoses = await diagnosesService.getAll();
-      setDiagnoses(fetchedDiagnoses);
-    };
-    void fetchDiagnoses();
-  }, []);
+interface EntryProps {
+  entry: Entry;
+  diagnoses: Diagnosis[];
+}
 
+const Entry = ({ entry, diagnoses }: EntryProps) => {
   return (
     <Box key={entry.date} sx={{ mt: 2, py: 1, pl: 3, border: 1, borderRadius: 10 }}>
-      {entryDetails(entry)}
+      {entryDetails({ entry })}
       {entry.diagnosisCodes && (
         <List sx={{ listStyleType: "disc", pl: 4 }}>
           {entry.diagnosisCodes.map((code) => (
             <ListItem key={code} sx={{ display: "list-item" }}>
-              {code} {diagnoses.find((diagnosis) => diagnosis.code === code)?.name}
+              <div
+                style={{
+                  display: "inline",
+                  borderRadius: "5px",
+                  padding: "3px",
+                  backgroundColor: "#dddddd",
+                  fontWeight: "bold",
+                }}>
+                {code}
+              </div>{" "}
+              {diagnoses.find((diagnosis) => diagnosis.code === code)?.name}
             </ListItem>
           ))}
         </List>
